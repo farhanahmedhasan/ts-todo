@@ -1,10 +1,12 @@
+import InputField from './components/InputField'
 import './App.css'
 
 function App() {
   return (
-    <div>
-		<h1>Hello World</h1>
-	</div>
+    <div className="App">
+      <span className='heading'>Taskify</span>
+      <InputField />
+    </div>
   )
 }
 
