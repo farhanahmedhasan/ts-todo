@@ -11,11 +11,16 @@ function App() {
         setTodos([...todos,todo])
     }
 
+    function handleComplete(id: number){
+        const UpdatedTodos = todos.map(todo => todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : todo)
+        setTodos(UpdatedTodos)
+    }
+
     return (
         <div className="App">
             <span className='heading'>Taskify</span>
             <InputField onAddTodo={handleAddTodo}/>
-            <TodoList todos={todos}/>
+            <TodoList todos={todos} onComplete={handleComplete}/>
         </div>
     )
 }
