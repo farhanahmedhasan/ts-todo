@@ -1,7 +1,8 @@
+import TodoList from "./components/TodoList.tsx";
 import InputField from './components/InputField'
-import './App.css'
-import {useState} from "react";
 import {iTodo} from "./model.ts";
+import {useState} from "react";
+import './App.css'
 
 function App() {
     const [todos, setTodos] = useState<iTodo[]>([])
@@ -10,12 +11,13 @@ function App() {
         setTodos([...todos,todo])
     }
 
-  return (
-    <div className="App">
-      <span className='heading'>Taskify</span>
-      <InputField onAddTodo={handleAddTodo}/>
-    </div>
-  )
+    return (
+        <div className="App">
+            <span className='heading'>Taskify</span>
+            <InputField onAddTodo={handleAddTodo}/>
+            <TodoList todos={todos}/>
+        </div>
+    )
 }
 
 export default App
