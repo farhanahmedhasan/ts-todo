@@ -16,11 +16,16 @@ function App() {
         setTodos(UpdatedTodos)
     }
 
+    function handleDeleteTodo(id: number){
+        const updatedTodos = todos.filter(todo=> todo.id !== id)
+        setTodos(updatedTodos)
+    }
+
     return (
         <div className="App">
             <span className='heading'>Taskify</span>
             <InputField onAddTodo={handleAddTodo}/>
-            <TodoList todos={todos} onComplete={handleComplete}/>
+            <TodoList todos={todos} onComplete={handleComplete} onDelete={handleDeleteTodo}/>
         </div>
     )
 }
