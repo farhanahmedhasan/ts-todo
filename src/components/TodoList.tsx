@@ -14,8 +14,16 @@ interface iProps{
 
 export default function TodoList({todos, onComplete, onDelete, onSelect, onEdit, selectedTodoId}: iProps) {
     return(
-        <ul className="todos">
-            {todos.map(todo => <Todo key={todo.id} todo={todo} onComplete={onComplete} onDelete={onDelete} selectedTodoId={selectedTodoId} onSelect={onSelect} onEdit={onEdit}/>)}
-        </ul>
+        <div className="container">
+            <div className="todos">
+                <span className="todos__heading">Active Tasks</span>
+                    {todos.map(todo => <Todo key={todo.id} todo={todo} onComplete={onComplete} onDelete={onDelete} selectedTodoId={selectedTodoId} onSelect={onSelect} onEdit={onEdit}/>)}
+            </div>
+
+            <div className="todos remove">
+                <span className="todos__heading">Completed Tasks</span>
+                    {todos.map(todo => <Todo key={todo.id} todo={todo} onComplete={onComplete} onDelete={onDelete} selectedTodoId={selectedTodoId} onSelect={onSelect} onEdit={onEdit}/>)}
+            </div>
+        </div>
     )
 }
