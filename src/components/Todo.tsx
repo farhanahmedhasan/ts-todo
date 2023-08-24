@@ -7,12 +7,12 @@ interface iProps{
     todo: iTodo
     onComplete: (id: number) => void
     onDelete: (id: number) => void
-    selectedTodo: iTodo
+    selectedTodoId: number | null
     onSelect: (id: number) => void
     onEdit: (e: React.FormEvent<HTMLFormElement>,todo: string) => void
 }
 
-export default function Todo({todo, onComplete, onDelete, selectedTodo, onSelect, onEdit}: iProps) {
+export default function Todo({todo, onComplete, onDelete, selectedTodoId, onSelect, onEdit}: iProps) {
     const [isEditing, setIsEditing] = useState(false)
     const [editTodo, setEditTodo] = useState<string>(todo.todo)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -31,7 +31,7 @@ export default function Todo({todo, onComplete, onDelete, selectedTodo, onSelect
             onEdit(e,editTodo)
             setIsEditing(false)
         }}>
-            {isEditing && selectedTodo.id === todo.id ?
+            {isEditing && selectedTodoId === todo.id ?
                 <input type="text" ref={inputRef} value={editTodo} className="todos__single--text" onChange={(e)=> setEditTodo(e.target.value)}/>
                 :
                 <span className="todos__single--text" style={todo.isCompleted ? {textDecoration: "line-through"} : {textDecoration: "none"}}>{todo.todo}</span>

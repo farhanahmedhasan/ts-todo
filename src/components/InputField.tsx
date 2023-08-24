@@ -1,9 +1,8 @@
 import './styles.css'
 import React, {useRef, useState} from "react";
-import {iTodo} from "../model.ts";
 
 interface iProps{
-    onAddTodo :  (todo: iTodo) => void
+    onAddTodo :  (todo: string) => void
 }
 
 export default function InputField({onAddTodo}: iProps) {
@@ -13,8 +12,7 @@ export default function InputField({onAddTodo}: iProps) {
         e.preventDefault()
         if (!todo) return
 
-        const newTodo = {id: Date.now(), todo, isCompleted: false}
-        onAddTodo(newTodo)
+        onAddTodo(todo)
         setTodo("")
         inputRef.current?.blur()
     }

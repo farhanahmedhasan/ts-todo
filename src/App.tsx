@@ -1,44 +1,65 @@
+import React, {useReducer, useState} from "react";
 import TodoList from "./components/TodoList.tsx";
 import InputField from './components/InputField'
 import {iTodo} from "./model.ts";
-import React, {useState} from "react";
 import './App.css'
 
+type Actions =
+    | {type: "add", payload: string}
+    | {type: "remove", payload: number}
+    | {type: "done", payload: number}
+    | {type: "update", payload: {todoText: string, selectedTodoId: number | null}}
+
+function TodoReducer(state: iTodo[], action: Actions){
+    switch (action.type){
+        case "add":
+            return [
+                ...state,
+                {id: Date.now(), todo: action.payload, isCompleted: false}
+            ]
+
+        case "remove":
+            return state.filter(todo=> todo.id !== action.payload)
+
+        case "done":
+            return state.map(todo => todo.id === action.payload ? {...todo, isCompleted: !todo.isCompleted} : todo)
+
+        case "update":
+            return state.map(todo=> action.payload.selectedTodoId === todo.id ?  {...todo, todo: action.payload.todoText} : todo )
+    }
+}
+
+
 function App() {
-    const [todos, setTodos] = useState<iTodo[]>([])
+    const [state,dispatch] = useReducer(TodoReducer,[])
+    const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null)
 
-    const [selectedTodo, setSelectedTodo] = useState<iTodo>({id:Date.now(), todo: "", isCompleted: false})
-
-    function handleAddTodo(todo:iTodo) {
-        setTodos([...todos,todo])
+    function handleAddTodo(todo:string) {
+        dispatch({type:"add", payload: todo})
     }
 
     function handleComplete(id: number){
-        const UpdatedTodos = todos.map(todo => todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : todo)
-        setTodos(UpdatedTodos)
+        dispatch({type:"done", payload: id})
     }
 
     function handleDeleteTodo(id: number){
-        const updatedTodos = todos.filter(todo=> todo.id !== id)
-        setTodos(updatedTodos)
+        dispatch({type: "remove", payload: id})
     }
 
     function handleSelect(id: number){
-        const getTodo = todos.find(todo=> todo.id === id)
-        setSelectedTodo(getTodo)
+        setSelectedTodoId(id)
     }
 
     function handleEdit(e:  React.FormEvent<HTMLFormElement>,todoText:string){
         e.preventDefault()
-        const updatedTodo = todos.map(todo=> selectedTodo.id === todo.id ?  {...selectedTodo, todo: todoText} : todo )
-        setTodos(updatedTodo)
+        dispatch({type: "update", payload: {todoText, selectedTodoId}})
     }
 
     return (
         <div className="App">
             <span className='heading'>Taskify</span>
             <InputField onAddTodo={handleAddTodo}/>
-            <TodoList todos={todos} onComplete={handleComplete} onDelete={handleDeleteTodo} selectedTodo={selectedTodo} onSelect={handleSelect} onEdit={handleEdit}/>
+            <TodoList todos={state} onComplete={handleComplete} onDelete={handleDeleteTodo} selectedTodoId={selectedTodoId} onSelect={handleSelect} onEdit={handleEdit}/>
         </div>
     )
 }
