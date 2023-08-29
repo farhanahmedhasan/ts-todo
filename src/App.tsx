@@ -3,6 +3,7 @@ import TodoList from "./components/TodoList.tsx";
 import InputField from './components/InputField'
 import {iTodo} from "./model.ts";
 import './App.css'
+import {DragDropContext, DropResult} from "react-beautiful-dnd";
 
 type Actions =
     | {type: "add", payload: string}
@@ -33,6 +34,7 @@ function TodoReducer(state: iTodo[], action: Actions){
 function App() {
     const [state,dispatch] = useReducer(TodoReducer,[])
     const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null)
+    const [completedTodo, setCompletedTodo] = useState<iTodo[]>([])
 
     function handleAddTodo(todo:string) {
         dispatch({type:"add", payload: todo})
@@ -55,11 +57,46 @@ function App() {
         dispatch({type: "update", payload: {todoText, selectedTodoId}})
     }
 
+    function handleDragEnd(result : DropResult){
+        const {source, destination} = result
+
+        if((!destination) || (destination.droppableId === source.droppableId && destination.index == source.index)) return
+
+        let add
+        const active = state
+        const complete = completedTodo
+
+        if(source.droppableId === "TodosList"){
+            add = active[source.index]
+            active.splice(source.index, 1)
+        } else {
+            add = complete[source.index]
+            complete.splice(source.index, 1)
+        }
+
+        if(destination.droppableId === "TodosList"){
+            active.splice(destination.index, 0, add)
+        } else {
+            complete.splice(destination.index, 0, add)
+        }
+    }
+
     return (
         <div className="App">
             <span className='heading'>Taskify</span>
             <InputField onAddTodo={handleAddTodo}/>
-            <TodoList todos={state} onComplete={handleComplete} onDelete={handleDeleteTodo} selectedTodoId={selectedTodoId} onSelect={handleSelect} onEdit={handleEdit}/>
+            <DragDropContext onDragEnd={handleDragEnd}>
+                <TodoList
+                    todos={state}
+                    onComplete={handleComplete}
+                    onDelete={handleDeleteTodo}
+                    onSelect={handleSelect}
+                    onEdit={handleEdit}
+                    selectedTodoId={selectedTodoId}
+                    completedTodo={completedTodo}
+                    setCompletedTodo={setCompletedTodo}
+                />
+            </DragDropContext>
         </div>
     )
 }
